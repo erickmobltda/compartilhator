@@ -18,7 +18,7 @@ App runs at `http://localhost:5173`.
 
 Push to `main` — GitHub Actions builds and deploys automatically to GitHub Pages.
 
-Live URL: **https://compartilhator.erickmob.com** (the old `erickmobltda.github.io/compartilhator/` redirects there).
+Live URL: **https://compartilhator.erickmob.dev** (the old `erickmobltda.github.io/compartilhator/` redirects there).
 
 ## Required GitHub Secrets
 
@@ -26,7 +26,7 @@ In the repository → **Settings** → **Secrets and variables** → **Actions**
 
 | Name | Value |
 |---|---|
-| `VITE_API_URL` | `https://api.erickmob.com` |
+| `VITE_API_URL` | `https://api.erickmob.dev` |
 | `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_APP_ID` | `firebase apps:sdkconfig WEB <compartilhator appId> --project erickmob-apps` |
 | `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID` | `erickmob-apps.firebaseapp.com`, `erickmob-apps` |
 
