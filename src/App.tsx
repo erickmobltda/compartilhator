@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { HashRouter } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
+import { signOut } from 'firebase/auth'
+import { auth } from './lib/firebase'
+import { useAuth } from './hooks/useAuth'
+import { LoginForm } from './components/LoginForm'
 import { InputForm } from './components/InputForm'
 import { LoadingSkeleton } from './components/LoadingSkeleton'
 import { ResultView } from './components/ResultView'
@@ -11,6 +15,7 @@ import { RepurposeResponse, InputMode, Language, HistoryItem } from './types'
 type View = 'form' | 'loading' | 'result' | 'error'
 
 export default function App() {
+  const { user, loading: authLoading } = useAuth()
   const { submit, loading, error, reset } = useRepurpose()
   const { history, addToHistory } = useHistory()
 
@@ -75,10 +80,21 @@ export default function App() {
             <p className="text-gray-500 mt-2 text-sm">
               Transform video URLs or text into ready-to-publish social media posts
             </p>
+            {user && (
+              <p className="text-gray-600 mt-3 text-xs">
+                {user.email} ·{' '}
+                <button onClick={() => void signOut(auth)} className="underline hover:text-gray-400">
+                  Sign out
+                </button>
+              </p>
+            )}
           </header>
 
+          {/* The API only answers signed-in users (Firebase ID token). */}
+          {!authLoading && !user && <LoginForm />}
+
           {/* Main content */}
-          {view === 'form' && (
+          {user && view === 'form' && (
             <InputForm
               onSubmit={handleSubmit}
               loading={loading}
@@ -87,9 +103,9 @@ export default function App() {
             />
           )}
 
-          {view === 'loading' && <LoadingSkeleton inputType={lastInputType} />}
+          {user && view === 'loading' && <LoadingSkeleton inputType={lastInputType} />}
 
-          {view === 'error' && error && (
+          {user && view === 'error' && error && (
             <div className="space-y-4">
               <div className="p-5 bg-red-950 border border-red-800 rounded-2xl">
                 <div className="flex items-start gap-3">
@@ -119,7 +135,7 @@ export default function App() {
             </div>
           )}
 
-          {view === 'result' && result && (
+          {user && view === 'result' && result && (
             <ResultView data={result} onNewContent={handleNewContent} />
           )}
         </div>

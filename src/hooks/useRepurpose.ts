@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from 'react'
 import { RepurposeResponse, Language } from '../types'
+import { auth } from '../lib/firebase'
 
 const API_URL = import.meta.env.VITE_API_URL as string
 const TIMEOUT_MS = 60_000
@@ -20,6 +21,7 @@ interface UseRepurposeResult {
 
 function getErrorMessage(status: number, body: string): string {
   if (status === 429) return 'Too many requests. Please wait a moment and try again.'
+  if (status === 401) return 'Your session expired. Sign in again.'
   try {
     const parsed = JSON.parse(body)
     const detail = parsed?.detail ?? parsed?.message ?? parsed?.error
@@ -62,9 +64,14 @@ export function useRepurpose(): UseRepurposeResult {
     }
 
     try {
+      const token = await auth.currentUser?.getIdToken()
+      if (!token) {
+        setError('Your session expired. Sign in again.')
+        return null
+      }
       const res = await fetch(`${API_URL}/repurpose`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(body),
         signal: controller.signal,
       })

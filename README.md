@@ -6,7 +6,7 @@ A social media content repurposing tool that transforms video links (Instagram R
 
 ```bash
 cp .env.example .env.local
-# Edit .env.local and set VITE_API_URL
+# Edit .env.local: VITE_API_URL and the Firebase web config
 
 npm install
 npm run dev
@@ -18,16 +18,18 @@ App runs at `http://localhost:5173`.
 
 Push to `main` — GitHub Actions builds and deploys automatically to GitHub Pages.
 
-Live URL: `https://erickmob.github.io/compartilhator/`
+Live URL: **https://compartilhator.erickmob.com** (the old `erickmobltda.github.io/compartilhator/` redirects there).
 
-## Required GitHub Secret
+## Required GitHub Secrets
 
-In the repository → **Settings** → **Secrets and variables** → **Actions**, add:
+In the repository → **Settings** → **Secrets and variables** → **Actions**:
 
 | Name | Value |
 |---|---|
-| `VITE_API_URL` | `https://transcriptor.erickmob.dev` |
+| `VITE_API_URL` | `https://api.erickmob.com` |
+| `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_APP_ID` | `firebase apps:sdkconfig WEB <compartilhator appId> --project erickmob-apps` |
+| `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID` | `erickmob-apps.firebaseapp.com`, `erickmob-apps` |
 
-## Backend
+## Login and backend
 
-This app calls the **transcriptor** service (`/repurpose` endpoint), which downloads video audio, transcribes it, and uses AI to generate platform-optimized posts. The backend runs on Oracle Cloud behind a Cloudflare Tunnel.
+Generating posts requires signing in (Firebase Auth, project `erickmob-apps`, shared with the other apps; sign-up is off, accounts are created in the Firebase console). Each call to `POST /repurpose` on [erickmob-api](https://github.com/erickmobltda/erickmob-api) carries the user's Firebase ID token; the API downloads the video audio, transcribes it, and uses AI to generate platform-optimized posts. It runs on Oracle Cloud behind a Cloudflare Tunnel. The history of generated posts stays in the browser (localStorage).
