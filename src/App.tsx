@@ -10,6 +10,7 @@ import { LoadingSkeleton } from './components/LoadingSkeleton'
 import { ResultView } from './components/ResultView'
 import { useRepurpose } from './hooks/useRepurpose'
 import { useHistory } from './hooks/useHistory'
+import { DEMO_EMAIL, DEMO_HISTORY } from './lib/demo'
 import { RepurposeResponse, InputMode, Language, HistoryItem } from './types'
 
 type View = 'form' | 'loading' | 'result' | 'error'
@@ -18,6 +19,7 @@ export default function App() {
   const { user, loading: authLoading } = useAuth()
   const { submit, loading, error, reset } = useRepurpose()
   const { history, addToHistory } = useHistory()
+  const isDemo = user?.email === DEMO_EMAIL
 
   const [view, setView] = useState<View>('form')
   const [result, setResult] = useState<RepurposeResponse | null>(null)
@@ -98,7 +100,7 @@ export default function App() {
             <InputForm
               onSubmit={handleSubmit}
               loading={loading}
-              history={history}
+              history={isDemo ? DEMO_HISTORY : history}
               onHistorySelect={handleHistorySelect}
             />
           )}
