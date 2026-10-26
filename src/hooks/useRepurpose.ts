@@ -22,6 +22,7 @@ interface UseRepurposeResult {
 function getErrorMessage(status: number, body: string): string {
   if (status === 429) return 'Too many requests. Please wait a moment and try again.'
   if (status === 401) return 'Your session expired. Sign in again.'
+  if (status === 403) return 'Generating posts is not available in the demo account. Open one of the recent examples instead.'
   try {
     const parsed = JSON.parse(body)
     const detail = parsed?.detail ?? parsed?.message ?? parsed?.error
